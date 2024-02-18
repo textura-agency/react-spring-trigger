@@ -48,7 +48,7 @@ export interface ScrollValues {
  * @param {MutableRefObject<HTMLElement>} useScrollOptions.trigger the container to listen to scroll events on, defaults to the window.
  * @returns {SpringValues<{progress: number;}>} SpringValues the collection of values returned from the inner hook
  */
-export const useTriggerScroll = ({
+export const useSpringTrigger = ({
     trigger,
     start,
     end,
