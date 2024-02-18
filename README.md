@@ -2,7 +2,7 @@
 
 ### How to use
 
-Clone this repository and link to another gh
+*Will be added to npm soon*
 
 ### Important!
 
