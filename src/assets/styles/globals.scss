@@ -1,0 +1,70 @@
+@use "./_colors" as *;
+@use "./_grid" as *;
+@use "./_typography" as *;
+@use "./_functions" as *;
+
+@import "./_normalize";
+@import "../fonts/stylesheet.css";
+
+:root {
+    @each $name,
+    $color in $colors {
+        --color-#{$name}: #{$color};
+    }
+
+    @each $name,
+    $font in $fonts {
+        --font-size-#{$name}: #{$font};
+    }
+
+    @each $name,
+    $point in $breakpoints {
+        --breakpoint-#{$name}: #{$point};
+    }
+
+    @each $name,
+    $size in $breakpoints-fonts {
+        --breakpoint-font-#{$name}: #{$size};
+    }
+}
+
+html {
+    color: color(primary);
+    background-color: color(background);
+    font-size: var(--breakpoint-font-xlg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @include generate-grid;
+}
+
+html, body {
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    overscroll-behavior-y: none;
+    min-height: 100vh;
+}
+body::-webkit-scrollbar { width: 0; }
+
+// For Example Only
+body { min-height: 200vh !important; }
+
+html.lenis {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+    pointer-events: none;
+}
+

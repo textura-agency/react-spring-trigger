@@ -1,0 +1,14 @@
+@use 'sass:map';
+
+$colors: (
+    primary: #FDFDFD,
+    background: #1d1d1d,
+);
+
+@function color($name) {
+    @if not map.get($colors, $name) {
+        @error '"#{$name}" is not a valid color name';
+    }
+    @return var(--color-#{$name})
+};
+ 

@@ -1,0 +1,23 @@
+@import '../fonts/stylesheet';
+
+$fonts: (
+    16: 1rem,
+    24: 1.5rem,
+    48: 3rem,
+    64: 4rem
+);
+
+@function font($name) {
+  @if not map-get($fonts, $name) {
+    @error '"#{$name}" is not a valid font value';
+    @return var(--invalid-font-size-name);
+  }
+  @return var(--font-size-#{$name});
+}
+
+
+// Mixin Example
+// @mixin font-сera-medium() {
+//   font-family: 'Cera Pro', sans-serif;
+//   font-weight: 400;
+// }

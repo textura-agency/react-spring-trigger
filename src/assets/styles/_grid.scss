@@ -1,0 +1,74 @@
+@use 'sass:map';
+@use './_functions.scss' as *;
+@use './_colors.scss' as *;
+
+
+$breakpoints: (
+  xlg: 1920px,
+  lg: 1440px,
+  xmd: 1024px,
+  md: 768px,
+  sm: 480px,
+  xsm: 320px
+);
+
+// $fontBase(16px) * 100vw / breakpoint(Xpx)
+// IMPORTANT: If you use <AdaptiveGrid/>, all breakpoints bigger than [baseWidth] make no sense
+$breakpoints-fonts: (
+  xlg: 16px, // Mixed Grid. Bigger than (1440px in demo) screens controls by <AdaptiveGrid/> from '@/hooks/useGrid'
+  lg: 0.833333333vw,
+  xmd: 1.5625vw,
+  md: 2.08333333vw,
+  sm: 3.33vw,
+  xsm: 5vw
+);
+
+
+@function point($name) {
+  @return map.get($breakpoints, $name);
+}
+
+@mixin generate-grid {
+  @each $name,
+  $size in $breakpoints-fonts {
+    @media screen and (max-width: point($name)) {
+      font-size: var(--breakpoint-font-#{$name});
+    }
+  }
+}
+
+@mixin xlg {
+  @media screen and (max-width: point(xlg)) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media screen and (max-width: point(lg)) {
+    @content;
+  }
+}
+
+@mixin xmd {
+  @media screen and (max-width: point(xmd)) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media screen and (max-width: point(md)) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media screen and (max-width: point(sm)) {
+    @content;
+  }
+}
+
+@mixin xsm {
+  @media screen and (max-width: point(xsm)) {
+    @content;
+  }
+}
