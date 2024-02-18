@@ -1,6 +1,6 @@
 import { Html, Head, Main, NextScript } from 'next/document'
 
-const title = 'React Three Next Starter'
+const title = 'React Spring Trigger by Textura Agency'
 const url = 'https://textura.agency'
 const description = 'Textura Agency'
 const author = 'Textura Agency'
@@ -30,7 +30,7 @@ export default function Document() {
                 <meta property='og:title' content={title} />
                 <meta property='og:type' content='site' />
                 <meta property='og:url' content={url} />
-                <meta property='og:image' content={'/icons/share.png'} />
+                <meta property='og:image' content={'/icons/startup.png'} />
                 <meta property='og:site_name' content={title} />
                 <meta property='og:description' content={description} />
 

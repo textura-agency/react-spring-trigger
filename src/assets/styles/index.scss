@@ -1,4 +1,0 @@
-@forward './colors.scss' hide $colors;
-@forward './typography.scss' hide $fonts;
-@forward './grid.scss' hide $breakpoints, $breakpoints-fonts, point, generate-grid;
-@forward './functions.scss' hide strip-unit;
