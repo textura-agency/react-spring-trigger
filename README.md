@@ -15,12 +15,15 @@ All already implemented features work the same as in gsap. Just read their docum
 - from: Object<T>
 - to: Object<T>
 
+- enable: boolean // Reactive state, True by default
+
 ### Example
 
 ```
     const triggerRef = useRef<HTMLElement | null>(null)
+    const [pageLoaded, setPageLoaded] = useState(false)
 
-    const { values } = useSpringTrigger({
+    const [values, states] = useSpringTrigger({
       trigger: triggerRef,
       start: 'top bottom',
       end: 'bottom top',
@@ -31,6 +34,7 @@ All already implemented features work the same as in gsap. Just read their docum
       to: {
         x: '0%'
       },
+      enable: pageLoaded,
       onChange: (state) => {
         console.log(state)
       }

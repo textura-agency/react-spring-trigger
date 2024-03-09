@@ -12,6 +12,7 @@ export interface UseScrollOptions extends SpringProps {
     to?: {[x: string]: any},
     scrub?: boolean,
     toggleAction?: any
+    enable?: boolean
 }
 
 export interface ScrollState {
@@ -22,7 +23,7 @@ export interface ScrollState {
     length: number
 }
 export interface ScrollValues {
-    [x: number]: string
+    [x: number | string]: string
 }
 
 export type ToggleActionTypes = "play" | "pause" | "resume" | "reset" | "restart" | "complete" | "reverse" | "none"
@@ -46,13 +47,16 @@ export const useSpringTrigger = ({
     scrub,
     toggleAction,
     onChange,
+    enable = true,
     ...springOptions
-}: UseScrollOptions = {}): {values: SpringValues<ScrollValues>, state: SpringValues<ScrollState> } => {
+}: UseScrollOptions = {}): [SpringValues<ScrollValues>, SpringValues<ScrollState>] => {
     const savers = useRef<any>({})
 
     // Fix mount issue with wrong values in spring
     const mounted = useRef(false) 
     // 
+    const enableRef = useRef<boolean>(!!enable)
+    useIsomorphicLayoutEffect(() => void (enableRef.current = !!enable), [enable])
 
     // For Values
     const [scrollValues, api] = useSpring(
@@ -88,7 +92,7 @@ export const useSpringTrigger = ({
                 if (!mounted.current) {
                     mounted.current = true
                     savers.current = { ...savers.current, progress: state.progress }
-                    if (typeof state.progress !== 'number') { return console.error('[useTriggerScroll]: Invalid <start> or <end> provided') }
+                    if (typeof state.progress !== 'number') { return console.error('[useSpringTrigger]: Invalid <start> or <end> provided') }
                     setTimeout(() => {
                         api.start({ to: { ...values }, config: { duration: 0 } })
                         stateApi.start({ to: { ...state }, config: { duration: 0 } })
@@ -97,13 +101,18 @@ export const useSpringTrigger = ({
                 }
                 if (savers.current?.progress !== state?.progress) {
                     savers.current = { ...savers.current, progress: state.progress }
-                    if (typeof state.progress !== 'number') { return console.error('[useTriggerScroll]: Invalid <start> or <end> provided') }
+                    if (typeof state.progress !== 'number') { return console.error('[useSpringTrigger]: Invalid <start> or <end> provided') }
                     api.start({ to: { ...values }, config: springOptions?.config || defaultConfig })
                     stateApi.start({ to: { ...state }, config: springOptions?.config || defaultConfig })
                 }
 
             },
-            { trigger: trigger, start, end, from, to, scrub, toggleAction}
+            {
+                trigger, 
+                start, end, from, to, 
+                scrub, toggleAction,
+                enable: enableRef
+            }
         )
 
         return () => {
@@ -116,22 +125,22 @@ export const useSpringTrigger = ({
     }, [toggleAction])
 
 
-    return {values: scrollValues, state: scrollStateValues}
+    return [scrollValues, scrollStateValues]
 }
 
 
 // On Scroll
 export type OnScrollCallback = (state: ScrollState | {}, values: ScrollValues) => void
-export type OnScrollOptions = { trigger?: MutableRefObject<HTMLElement>, start?: TriggerPos, end?: TriggerPos, from?: any, to?: any, scrub?: boolean, toggleAction?: any}
+export type OnScrollOptions = { trigger?: MutableRefObject<HTMLElement>, start?: TriggerPos, end?: TriggerPos, from?: any, to?: any, scrub?: boolean, toggleAction?: any, enable?: MutableRefObject<boolean>}
 export const onScroll = (
     callback: OnScrollCallback,
-    { trigger, start = 'bottom bottom', end = 'bottom top', from, to, scrub, toggleAction}: OnScrollOptions = {}
+    { trigger, start = 'bottom bottom', end = 'bottom top', from, to, scrub, toggleAction, enable }: OnScrollOptions = {}
 ) => {
     let rq: any = null
     render()
     function render(time?: number) {
         const _trigger = trigger?.current || document.documentElement
-        const state = calcProgress(start, end, _trigger)
+        const state = calcProgress(start, end, _trigger, enable)
         // @ts-expect-error
         const values = calcValues(from, to, state.progress, state.allProgress, scrub, toggleAction)
         callback({ ...state }, { ...values })
@@ -152,7 +161,7 @@ function lerp(start: number, end: number, t: number) {
 }
 
 
-function calcProgress(start: TriggerPos, end: TriggerPos, trigger: HTMLElement): ScrollState | {} {
+function calcProgress(start: TriggerPos, end: TriggerPos, trigger: HTMLElement, enable?: MutableRefObject<boolean>): ScrollState | {} {
     const bb = trigger.getBoundingClientRect()
 
     
@@ -178,7 +187,7 @@ function calcProgress(start: TriggerPos, end: TriggerPos, trigger: HTMLElement):
     if (!scrollStart || !scrollEnd) { return {} }
     const length = Math.abs(scrollStart - scrollEnd)
     const allProgress = (scrollStart + length) / length
-    const progress = 1 - clamp(0, 1, allProgress)
+    const progress = enable?.current ? ( 1 - clamp(0, 1, allProgress) ) : 0
 
     return {
         scrollStart,
